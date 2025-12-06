@@ -1,0 +1,67 @@
+<html lang="en">
+<body>
+<button onclick="onClick()">Click me!</button>
+<button onclick="anotherClick()">Click me while the thread is blocked!</button>
+<script>
+    async function getHarryPotterCharacters() {
+        await fetch('https://potterapi-fedeperin.vercel.app/en/characters').then(res => {
+            setTimeout(() => {
+                const data = res.json();
+                console.log(`received ${data.length} characters`);
+                afterPromiseResolveLoop();
+            }, 0);
+        });
+    }
+
+    async function getHarryPotterHouses() {
+        await fetch('https://potterapi-fedeperin.vercel.app/en/houses').then(res => {
+            setTimeout(() => {
+                const data = res.json();
+                console.log(`received ${data.length} houses`);
+                afterPromiseResolveLoop();
+            }, 0);
+        })
+    }
+
+    console.log('some sync code');
+
+    function anotherClick() {
+        alert('yay!')
+    }
+
+    function onClick() {
+        performance.mark('before Promises.all');
+        Promise.all([getHarryPotterCharacters(), getHarryPotterHouses()]).then(() => {
+            console.log('all info received');
+            performance.mark('info received');
+            afterPromiseResolveLoop();
+        });
+        performance.mark('before delay loop');
+        delayLoopSync();
+        performance.mark('after delay loop');
+        setTimeout(() => delayLoopAsync(), 1000);
+        performance.mark('after set timeout delay loop');
+    }
+
+    function delayLoopSync() {
+        delayLoop(1500_000_000, 'sync');
+    }
+
+    function delayLoopAsync() {
+        delayLoop(100_000_000, 'setTimeout');
+    }
+
+    function afterPromiseResolveLoop() {
+        delayLoop(1500_000_000, 'promiseAll');
+    }
+
+    function delayLoop(num, markName) {
+        performance.mark(`delayed loop ${markName}`)
+        for (let i = 0; i < num; i++) {
+            // do nothing
+        }
+        console.log('delay loop completed');
+    }
+</script>
+</body>
+</html>
