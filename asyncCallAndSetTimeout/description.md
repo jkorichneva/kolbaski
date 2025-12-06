@@ -1,6 +1,7 @@
 # Example with async call and setTimeout + user click
 
 ## Performance image
+![performance screenshot](./image.png)
 
 ## What is happening:
 
