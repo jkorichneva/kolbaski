@@ -1,0 +1,44 @@
+<html lang="en">
+<body>
+<button onclick="onClick()">Click me!</button>
+<button onclick="anotherClick()">Click me while the thread is blocked!</button>
+<script>
+    async function callAsyncApi() {
+        const response = await fetch('https://google.com')
+        console.log('called async api');
+    }
+
+    console.log('some sync code');
+
+    function anotherClick() {
+        alert('yay!')
+    }
+
+    function onClick() {
+        performance.mark('before async call');
+        callAsyncApi();
+        performance.mark('before delay loop');
+        delayLoopSync();
+        performance.mark('after delay loop');
+        setTimeout(() => delayLoopAsync(), 1000);
+        performance.mark('after set timeout delay loop');
+    }
+
+    function delayLoopSync() {
+        delayLoop(10_000_000_000, 'sync');
+    }
+
+    function delayLoopAsync() {
+        delayLoop(100_000_000, 'setTimeout');
+    }
+
+    function delayLoop(num, markName) {
+        performance.mark(`delayed loop ${markName}`)
+        for (let i = 0; i < num; i++) {
+            // do nothing
+        }
+        console.log('delay loop completed');
+    }
+</script>
+</body>
+</html>
