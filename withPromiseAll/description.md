@@ -12,3 +12,4 @@ callback is longer because it includes both last promise callback code & Promise
 ![with sync code](./withSyncCodeInsidePromises.png)
 
 If we add await before Promise.all, then the microtasks are executed first and the last microtask is united with the sync code:
+![with await Promise all](./withAwaitPromiseAll.png)
