@@ -7,12 +7,14 @@
         const response = await fetch('https://potterapi-fedeperin.vercel.app/en/characters');
         const data = response.json();
         console.log(`received ${data.length} characters`);
+        afterPromiseResolveLoop();
     }
 
     async function getHarryPotterHouses() {
         const response = await fetch('https://potterapi-fedeperin.vercel.app/en/houses');
         const data = response.json();
         console.log(`received ${data.length} houses`);
+        afterPromiseResolveLoop();
     }
 
     console.log('some sync code');
