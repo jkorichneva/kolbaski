@@ -13,3 +13,6 @@ callback is longer because it includes both last promise callback code & Promise
 
 If we add await before Promise.all, then the microtasks are executed first and the last microtask is united with the sync code:
 ![with await Promise all](./withAwaitPromiseAll.png)
+
+If we rewrite the functions for Harry Potter fetching in a fetch().then() way, the result is the same, the callback is put into the 
+microtask.
