@@ -1,0 +1,72 @@
+<html lang="en">
+<body>
+<button onclick="onClick()">Click me!</button>
+<button onclick="anotherClick()">Click me while the thread is blocked!</button>
+<script>
+    async function getHarryPotterCharacters() {
+        await fetch('https://potterapi-fedeperin.vercel.app/en/characters').then(async res => {
+            await yieldToMain();
+            const data = await res.json();
+            console.log(`received ${data.length} characters`);
+            afterPromiseResolveLoop();
+        });
+    }
+
+    async function getHarryPotterHouses() {
+        await fetch('https://potterapi-fedeperin.vercel.app/en/houses').then(async res => {
+            await yieldToMain();
+            const data = await res.json();
+            console.log(`received ${data.length} houses`);
+            afterPromiseResolveLoop();
+        })
+    }
+
+    console.log('some sync code');
+
+    function anotherClick() {
+        alert('yay!')
+    }
+
+    async function onClick() {
+        performance.mark('before Promises.all');
+        await Promise.all([getHarryPotterCharacters(), getHarryPotterHouses()]);
+        performance.mark('before delay loop');
+        delayLoopSync();
+        performance.mark('after delay loop');
+        setTimeout(() => delayLoopAsync(), 1000);
+        performance.mark('after set timeout delay loop');
+    }
+
+    function yieldToMain () {
+        if (globalThis.scheduler?.yield) {
+            return scheduler.yield();
+        }
+
+        // Fall back to yielding with setTimeout.
+        return new Promise(resolve => {
+            setTimeout(resolve, 0);
+        });
+    }
+
+    function delayLoopSync() {
+        delayLoop(1500_000_000, 'sync');
+    }
+
+    function delayLoopAsync() {
+        delayLoop(100_000_000, 'setTimeout');
+    }
+
+    function afterPromiseResolveLoop() {
+        delayLoop(1500_000_000, 'promiseAll');
+    }
+
+    function delayLoop(num, markName) {
+        performance.mark(`delayed loop ${markName}`)
+        for (let i = 0; i < num; i++) {
+            // do nothing
+        }
+        console.log('delay loop completed');
+    }
+</script>
+</body>
+</html>
